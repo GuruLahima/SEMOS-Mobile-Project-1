@@ -15,6 +15,7 @@ public class LevelGenerator : MonoBehaviour
     public GameObject obstaclePrefab;
     public Transform spawnPosition;
     public Transform spawnParent;
+    public BirdController bird;
 
     private float timer;
     private List<GameObject> obstacles = new List<GameObject>();
@@ -23,6 +24,8 @@ public class LevelGenerator : MonoBehaviour
     void Start()
     {
         // InvokeRepeating("SpawnObstacle", startDelay, spawnInterval);
+
+        bird.Points = -1;
     }
 
     void SpawnObstacle()

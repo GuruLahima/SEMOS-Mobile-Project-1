@@ -11,6 +11,13 @@ public class BirdController : MonoBehaviour
     public GameObject GameOverScreen;
     public float jumpForce;
     public TextMeshProUGUI pointsCounter;
+    public TextMeshProUGUI PreviousHighscoreCounter;
+    public Transform birdSprite;
+    public float maxRot;
+    public float minRot;
+    public float velocityOffset;
+    public float maxVelocity;
+    public float spriteRotationFactor;
 
     public UnityEvent OnHitObstacle;
     public UnityEvent OnGetPoint;
@@ -18,17 +25,59 @@ public class BirdController : MonoBehaviour
 
     private Rigidbody2D rBody;
     private int points;
+    public int Points
+    {
+        get
+        {
+            return points;
+        }
+        set
+        {
+            if (value > 0)
+            {
+                points = value;
+
+                // update highscore if necessary
+                if (points > previousHighscore)
+                {
+                    PlayerPrefs.SetInt("HighScore", points);
+                }
+
+                // play sound
+                OnGetPoint?.Invoke();
+
+                pointsCounter.text = points.ToString();
+            }
+            else
+            {
+                Debug.LogWarning("Points should never be negative");
+            }
+        }
+    }
+    private int previousHighscore;
+
+
     // Start is called before the first frame update
     void Start()
     {
+        int someInt = Points;
         rBody = GetComponent<Rigidbody2D>();
 
         // unpause game
         Time.timeScale = 1;
+
+        previousHighscore = PlayerPrefs.GetInt("HighScore", 0);
+        PreviousHighscoreCounter.text = previousHighscore.ToString();
     }
 
     // Update is called once per frame
     void Update()
+    {
+        Jump();
+        RotateSprite();
+    }
+
+    void Jump()
     {
         // when player clicks the left mouse button
         if (Input.GetMouseButtonDown(0))
@@ -40,7 +89,17 @@ public class BirdController : MonoBehaviour
 
             OnJump?.Invoke();
         }
+    }
 
+    void RotateSprite()
+    {
+
+        Quaternion maxRotation = Quaternion.Euler(0, 0, maxRot);
+        Quaternion minRotation = Quaternion.Euler(0, 0, minRot);
+        birdSprite.localRotation = Quaternion.Lerp(maxRotation, minRotation, Mathf.Abs(rBody.velocity.y - velocityOffset) / maxVelocity);
+        Debug.Log("rBody.velocity.y " + rBody.velocity.y);
+
+        // birdSprite.localRotation = Quaternion.Euler(0, 0, rBody.velocity.y * spriteRotationFactor);
     }
 
     private void OnCollisionEnter2D(Collision2D other)
@@ -57,12 +116,7 @@ public class BirdController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        points++;
-
-        // update the points counter in the UI
-        pointsCounter.text = points.ToString();
-
-        OnGetPoint?.Invoke();
+        Points++;
     }
 
     public void RestartGame()
