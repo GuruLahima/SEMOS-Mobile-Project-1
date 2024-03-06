@@ -94,12 +94,12 @@ public class BirdController : MonoBehaviour
     void RotateSprite()
     {
 
-        Quaternion maxRotation = Quaternion.Euler(0, 0, maxRot);
-        Quaternion minRotation = Quaternion.Euler(0, 0, minRot);
-        birdSprite.localRotation = Quaternion.Lerp(maxRotation, minRotation, Mathf.Abs(rBody.velocity.y - velocityOffset) / maxVelocity);
-        Debug.Log("rBody.velocity.y " + rBody.velocity.y);
+        // Quaternion maxRotation = Quaternion.Euler(0, 0, maxRot);
+        // Quaternion minRotation = Quaternion.Euler(0, 0, minRot);
+        // birdSprite.localRotation = Quaternion.Lerp(maxRotation, minRotation, Mathf.Abs(rBody.velocity.y - velocityOffset) / maxVelocity);
+        // Debug.Log("rBody.velocity.y " + rBody.velocity.y);
 
-        // birdSprite.localRotation = Quaternion.Euler(0, 0, rBody.velocity.y * spriteRotationFactor);
+        birdSprite.localRotation = Quaternion.Euler(0, 0, rBody.velocity.y * spriteRotationFactor);
     }
 
     private void OnCollisionEnter2D(Collision2D other)
